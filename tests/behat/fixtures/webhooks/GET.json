@@ -1,0 +1,21 @@
+{
+  "total": 2,
+  "hits": [
+    {
+      "id": "site-webhook",
+      "portal_id": "11905591",
+      "name": "Totara LMS integration webhook",
+      "url": "https://www.example.com/moodle/totara/contentmarketplace/contentmarketplaces/goonetwo/payload.php",
+      "event_types": ["enrollment.complete"],
+      "status": "active"
+    },
+    {
+      "id": "other-site-webhook",
+      "portal_id": "11905591",
+      "name": "Totara LMS integration webhook",
+      "url": "https://staging.example.com/totara/contentmarketplace/contentmarketplaces/goonetwo/payload.php",
+      "event_types": ["enrollment.complete"],
+      "status": "active"
+    }
+  ]
+}

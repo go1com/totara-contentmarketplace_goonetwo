@@ -1,0 +1,51 @@
+{{!
+   This file is part of Totara Learn
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+   @package    contentmarketplace_goonetwo
+   @copyright  2026 onwards Androgogic Pty Ltd
+   @author     Kirill Astashov <kirill.astashov@androgogic.com>
+   @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+
+{{{allow_accounts_same_email_warning}}}
+
+<p>{{#str}}webhook_desc, contentmarketplace_goonetwo{{/str}}</p>
+
+{{#webhook_exists}}
+    {{#str}} webhook_already_created, contentmarketplace_goonetwo {{/str}}
+    <br />
+    <pre>{{ webhook_data }}</pre>
+    <br />
+    {{#webhook_problems.0}}
+        <div class="alert alert-warning">
+            {{#str}}webhook_incorrect, contentmarketplace_goonetwo{{/str}}
+            <ul>
+                {{#webhook_problems}}
+                    <li>{{.}}</li>
+                {{/webhook_problems}}
+            </ul>
+            {{#str}}webhook_fix_desc, contentmarketplace_goonetwo{{/str}}
+        </div>
+    {{/webhook_problems.0}}
+{{/webhook_exists}}
+
+{{{webhook_button}}}
+
+<div class="tcm-goonetwo-webhook-settings">
+    {{{webhook_settings_form}}}
+</div>
+
+<p class="tcm-goonetwo-webhook-log-link"><a href="{{webhook_log_url}}">{{#str}}webhook_log_view, contentmarketplace_goonetwo{{/str}}</a></p>

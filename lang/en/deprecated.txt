@@ -1,0 +1,2 @@
+warningdisablemarketplace:yes,contentmarketplace_goonetwo
+account,contentmarketplace_goonetwo

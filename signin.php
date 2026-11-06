@@ -1,0 +1,59 @@
+<?php
+/*
+ * This file is part of Totara Learn
+ *
+ * Copyright (C) 2018 onwards Totara Learning Solutions LTD
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Sergey Vidusov <sergey.vidusov@androgogic.com>
+ * @package contentmarketplace_goonetwo
+ */
+
+require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
+
+use contentmarketplace_goonetwo\contentmarketplace;
+use contentmarketplace_goonetwo\oauth;
+use contentmarketplace_goonetwo\config_session_storage;
+
+$code = required_param('code', PARAM_RAW);
+$client_id = optional_param('client_id', '', PARAM_ALPHANUMEXT);
+$client_secret = optional_param('client_secret', '', PARAM_ALPHANUMEXT);
+$state = optional_param('state', '', PARAM_RAW);
+
+$context = context_system::instance();
+$PAGE->set_context($context);
+$PAGE->set_url('/totara/contentmarketplace/contentmarketplaces/goonetwo/signin.php');
+
+require_login();
+require_capability('totara/contentmarketplace:config', $context);
+\totara_contentmarketplace\local::require_contentmarketplace();
+
+// The state must carry the anti-forgery nonce issued to this session when the authorize
+// URL was generated, otherwise the callback (and its code/client credentials) is forged.
+if (!oauth::verify_authorize_state($state)) {
+    throw new moodle_exception('error:invalidoauthstate', 'contentmarketplace_goonetwo');
+}
+
+$PAGE->set_pagelayout('popup');
+$PAGE->set_title(get_string('setup_page_header', 'contentmarketplace_goonetwo'));
+
+$oauth_client = new oauth(new config_session_storage());
+$oauth_client->token_setup($client_id, $client_secret, $code, contentmarketplace::oauth_redirect_uri());
+
+$redirect = new moodle_url('/totara/contentmarketplace/contentmarketplaces/goonetwo/setup.php');
+$PAGE->requires->js_init_code("window.opener.location.href = '$redirect'; window.close();");
+
+echo $OUTPUT->header();
+echo $OUTPUT->footer();

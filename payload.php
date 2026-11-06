@@ -1,0 +1,40 @@
+<?php
+/**
+ * This file is part of Totara Learn
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package    contentmarketplace_goonetwo
+ * @copyright  2026 onwards Androgogic Pty Ltd
+ * @author     Kirill Astashov <kirill.astashov@androgogic.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
+
+use contentmarketplace_goonetwo\webhook;
+
+// Check Go1 marketplace plugin is enabled.
+/** @var \totara_contentmarketplace\plugininfo\contentmarketplace $plugin */
+$plugin = \core_plugin_manager::instance()->get_plugin_info("contentmarketplace_goonetwo");
+if ($plugin === null) {
+    throw new coding_exception('The contentmarketplace_goonetwo plugin is not yet installed.');
+}
+if (!$plugin->is_enabled()) {
+    throw new \moodle_exception('error:disabledmarketplace', 'totara_contentmarketplace', '', $plugin->displayname);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    webhook::process_request();
+}
