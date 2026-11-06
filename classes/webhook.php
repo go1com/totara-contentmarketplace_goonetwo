@@ -43,6 +43,12 @@ class webhook {
     const WEBHOOK_TOLERANCE_SECONDS = 600;
 
     /**
+     * Maximum size (in bytes) of a webhook request body that will be read.
+     * A Go1 event payload is less than 1 KB.
+     */
+    const MAX_REQUEST_BYTES = 65536;
+
+    /**
      * Event types that the webhook of this site must send.
      */
     const EVENT_TYPES = ['enrollment.complete'];
@@ -240,7 +246,13 @@ class webhook {
      * @return void
      */
     public static function process_request(): void {
-        $request = file_get_contents('php://input');
+        // Read one byte more than the limit to find an oversized body without reading all of it.
+        $request = file_get_contents('php://input', false, null, 0, self::MAX_REQUEST_BYTES + 1);
+        if ($request === false || strlen($request) > self::MAX_REQUEST_BYTES) {
+            self::add_to_log([], null, 'Webhook request body exceeds the size limit.');
+            return;
+        }
+
         $header = isset($_SERVER['HTTP_GO1_SIGNATURE']) ? (string) $_SERVER['HTTP_GO1_SIGNATURE'] : '';
 
         $error = self::verify_signature($request, $header, self::get_webhook_secret_key());
